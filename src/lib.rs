@@ -30,7 +30,6 @@ pub struct Universe {
 
 #[wasm_bindgen]
 impl Universe {
-
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
 
@@ -39,15 +38,14 @@ impl Universe {
                 let idx = self.get_index(row, col);
                 let cell = self.cells[idx];
                 let live_neighbors = self.live_neighbor_count(row, col);
-
                 next.set(idx, match (cell, live_neighbors) {
                     (true, x) if x < 2 => false,
                     (true, 2) | (true, 3) => true,
-                    (true, x) if x > 3 => false,
+                    //give a few cells a chance to survive overpopulation
+                    (true, x) if x > 3 => js_sys::Math::random() < 0.03,
                     (false, 3) => true,
                     (otherwise, _) => otherwise
                 });
-
             }
         }
 
@@ -57,7 +55,6 @@ impl Universe {
     fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
     }
-
 
     fn live_neighbor_count(&self, row: u32, column: u32) -> u8 {
         let mut count = 0;
@@ -83,15 +80,9 @@ impl Universe {
         let size = (width * height) as usize;
 
         let mut cells = FixedBitSet::with_capacity(size);
-        for i in 0..size {
-            cells.set(i, js_sys::Math::random() < 0.5 );
-        }
+        (0..size).for_each(|i| cells.set(i, js_sys::Math::random() < 0.5));
 
-        Universe {
-            width,
-            height,
-            cells,
-        }
+        Universe { width, height, cells }
     }
 
     pub fn width(&self) -> u32 {
@@ -105,6 +96,5 @@ impl Universe {
     pub fn cells(&self) -> *const u32 {
         self.cells.as_slice().as_ptr()
     }
-
 }
 

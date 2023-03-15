@@ -1,10 +1,9 @@
 import { memory } from "wasm-game-of-life/wasm_game_of_life_bg";
-import { Universe, Cell } from "wasm-game-of-life";
+import { Universe } from "wasm-game-of-life";
 
 const CELL_SIZE = 5; // px
-const GRID_COLOR = "#CCCCCC";
-const DEAD_COLOR = "#FFFFFF";
-const ALIVE_COLOR = "#000000";
+const DEAD_COLOR = "#000080";
+const ALIVE_COLOR = "#00ffff";
 
 // Construct the universe, and get its width and height.
 const universe = Universe.new();
@@ -22,27 +21,7 @@ const ctx = canvas.getContext('2d');
 const renderLoop = () => {
   universe.tick();
   drawCells();
-  setTimeout(() => requestAnimationFrame(renderLoop), 25);
-};
-
-
-const drawGrid = () => {
-  ctx.beginPath();
-  ctx.strokeStyle = GRID_COLOR;
-
-  // Vertical lines.
-  for (let i = 0; i <= width; i++) {
-    ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-    ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
-  }
-
-  // Horizontal lines.
-  for (let j = 0; j <= height; j++) {
-    ctx.moveTo(0,                           j * (CELL_SIZE + 1) + 1);
-    ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
-  }
-
-  ctx.stroke();
+  setTimeout(() => requestAnimationFrame(renderLoop), 10);
 };
 
 
@@ -74,10 +53,10 @@ const drawCells = () => {
         : DEAD_COLOR;
 
       ctx.fillRect(
-        col * (CELL_SIZE + 1) + 1,
-        row * (CELL_SIZE + 1) + 1,
-        CELL_SIZE,
-        CELL_SIZE
+        col * (CELL_SIZE + 1) ,
+        row * (CELL_SIZE + 1) ,
+        CELL_SIZE + 1,
+        CELL_SIZE + 1
       );
     }
   }
@@ -86,7 +65,6 @@ const drawCells = () => {
 };
 
 
-drawGrid();
 drawCells();
 requestAnimationFrame(renderLoop);
 
